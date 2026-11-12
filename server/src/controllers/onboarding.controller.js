@@ -3,12 +3,20 @@ import { z } from "zod";
 import prisma from "../config/prisma.js";
 import { randomUUID } from "node:crypto";
 
+// -------------------- VALIDATION --------------------
+
 const applicationSchema = z.object({
     accountType: z.enum(["SAVINGS", "CURRENT"]),
     applicationNote: z.string().max(300).optional().default("")
 });
 
-// Submit an account application
+const reviewSchema = z.object({
+    status: z.enum(["APPROVED", "REJECTED"]),
+    remarks: z.string().max(300).optional().default("")
+});
+
+// -------------------- USER: APPLY FOR ACCOUNT --------------------
+
 export const applyForAccount = async (req, res) => {
     try {
         const parsed = applicationSchema.safeParse(req.body);
@@ -86,11 +94,14 @@ export const applyForAccount = async (req, res) => {
     }
 };
 
-// Get the logged-in user's application
+// -------------------- USER: GET MY APPLICATION --------------------
+
 export const getMyApplication = async (req, res) => {
     try {
         const application = await prisma.onboarding.findUnique({
-            where: { userId: req.user.userId },
+            where: {
+                userId: req.user.userId
+            },
             select: {
                 id: true,
                 accountType: true,
@@ -113,12 +124,8 @@ export const getMyApplication = async (req, res) => {
     }
 };
 
-const reviewSchema = z.object({
-    status: z.enum(["APPROVED", "REJECTED"]),
-    remarks: z.string().max(300).optional().default("")
-});
+// -------------------- ADMIN: GET ALL APPLICATIONS --------------------
 
-// Admin: Get all account applications
 export const getAllApplications = async (req, res) => {
     try {
         const applications = await prisma.onboarding.findMany({
@@ -145,6 +152,15 @@ export const getAllApplications = async (req, res) => {
 
         console.log("Applications found:", applications.length);
 
+        console.log(
+            "Application statuses:",
+            applications.map((app) => ({
+                id: app.id,
+                status: app.status,
+                userId: app.userId
+            }))
+        );
+
         return res.status(200).json({
             applications
         });
@@ -158,23 +174,16 @@ export const getAllApplications = async (req, res) => {
     }
 };
 
-// Admin: Approve or reject an account application
+// -------------------- ADMIN: APPROVE OR REJECT --------------------
+
 export const reviewApplication = async (req, res) => {
     try {
         const parsed = reviewSchema.safeParse(req.body);
 
         if (!parsed.success) {
-            return res.status(200).json({
-                message: "Application reviewed successfully",
-
-                application: result.application,
-
-                account: result.account
-                    ? {
-                        ...result.account,
-                        balance: result.account.balance.toString()
-                    }
-                    : null
+            return res.status(400).json({
+                message: "Invalid review details",
+                errors: parsed.error.issues
             });
         }
 
@@ -182,7 +191,14 @@ export const reviewApplication = async (req, res) => {
         const applicationId = req.params.id;
         const adminId = req.user.userId;
 
+        console.log("========== APPLICATION REVIEW ==========");
+        console.log("Application ID received:", applicationId);
+        console.log("Admin ID:", adminId);
+        console.log("Requested status:", status);
+
         const result = await prisma.$transaction(async (tx) => {
+
+            // Find the application
             const application = await tx.onboarding.findUnique({
                 where: {
                     id: applicationId
@@ -190,16 +206,21 @@ export const reviewApplication = async (req, res) => {
             });
 
             if (!application) {
+                console.log("Application not found:", applicationId);
                 throw new Error("APPLICATION_NOT_FOUND");
             }
+
+            console.log("Actual database status:", application.status);
 
             if (application.status !== "PENDING") {
                 throw new Error("APPLICATION_ALREADY_REVIEWED");
             }
 
-            const updatedApplication = await tx.onboarding.update({
+            // Update only if the application is still pending
+            const updateResult = await tx.onboarding.updateMany({
                 where: {
-                    id: applicationId
+                    id: applicationId,
+                    status: "PENDING"
                 },
                 data: {
                     status,
@@ -208,13 +229,45 @@ export const reviewApplication = async (req, res) => {
                 }
             });
 
+            if (updateResult.count !== 1) {
+                console.log("Conditional update failed:", updateResult.count);
+                throw new Error("APPLICATION_ALREADY_REVIEWED");
+            }
+
+            console.log("Application status updated:", status);
+
+            const updatedApplication = await tx.onboarding.findUnique({
+                where: {
+                    id: applicationId
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true,
+                            name: true,
+                            email: true
+                        }
+                    },
+                    reviewer: {
+                        select: {
+                            name: true,
+                            email: true
+                        }
+                    }
+                }
+            });
+
             let account = null;
 
+            // Create an account only when approved
             if (status === "APPROVED") {
+
                 const accountNumber =
                     "BV" +
-                    Date.now().toString() +
-                    Math.floor(100 + Math.random() * 900).toString();
+                    randomUUID()
+                        .replaceAll("-", "")
+                        .slice(0, 12)
+                        .toUpperCase();
 
                 account = await tx.account.create({
                     data: {
@@ -226,8 +279,11 @@ export const reviewApplication = async (req, res) => {
                         status: "ACTIVE"
                     }
                 });
+
+                console.log("Account created successfully:", account.id);
             }
 
+            // Save audit record
             await tx.auditLog.create({
                 data: {
                     actorId: adminId,
@@ -255,7 +311,15 @@ export const reviewApplication = async (req, res) => {
                 status === "APPROVED"
                     ? "Application approved successfully"
                     : "Application rejected successfully",
-            ...result
+
+            application: result.application,
+
+            account: result.account
+                ? {
+                    ...result.account,
+                    balance: result.account.balance.toString()
+                }
+                : null
         });
 
     } catch (error) {
@@ -278,4 +342,6 @@ export const reviewApplication = async (req, res) => {
         });
     }
 };
+
+
 

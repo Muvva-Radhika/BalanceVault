@@ -1,5 +1,3 @@
-
-
 import express from "express";
 
 import {
@@ -14,29 +12,11 @@ import { requireAdmin } from "../middleware/admin.middleware.js";
 
 const router = express.Router();
 
-// ------------------------------------------
-// USER ROUTES
-// ------------------------------------------
+// User routes
+router.post("/", authenticate, applyForAccount);
+router.get("/me", authenticate, getMyApplication);
 
-// Submit a new account application
-router.post(
-    "/",
-    authenticate,
-    applyForAccount
-);
-
-// Get logged-in user's application status
-router.get(
-    "/me",
-    authenticate,
-    getMyApplication
-);
-
-// ------------------------------------------
-// ADMIN ROUTES
-// ------------------------------------------
-
-// Get all account applications
+// Admin routes
 router.get(
     "/admin/all",
     authenticate,
@@ -44,7 +24,6 @@ router.get(
     getAllApplications
 );
 
-// Approve or reject an application
 router.patch(
     "/admin/:id/review",
     authenticate,
