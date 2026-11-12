@@ -1,0 +1,518 @@
+/* =====================================
+   BALANCEVAULT - TRANSACTIONS PAGE
+===================================== */
+
+.bv-transactions {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    color: #172033;
+}
+
+/* Page heading */
+
+.bv-page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.bv-eyebrow {
+    display: block;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    margin-bottom: 7px;
+}
+
+.bv-page-heading h1 {
+    font-size: 28px;
+    font-weight: 750;
+    margin: 0 0 7px;
+    color: #172033;
+}
+
+.bv-page-heading p,
+.bv-section-heading p {
+    color: #718096;
+    font-size: 14px;
+    margin: 0;
+}
+
+.bv-refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 17px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #334155;
+    border-radius: 9px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.bv-refresh-btn:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.bv-refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Account overview */
+
+.bv-overview-card {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    padding: 24px;
+    background: linear-gradient(120deg, #172554, #1e40af);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 5px 18px rgba(30, 64, 175, 0.12);
+}
+
+.bv-overview-icon {
+    width: 53px;
+    height: 53px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 13px;
+}
+
+.bv-overview-info {
+    flex: 1;
+}
+
+.bv-overview-info span {
+    font-size: 13px;
+    color: #dbeafe;
+}
+
+.bv-overview-info h2 {
+    margin: 5px 0;
+    font-size: 28px;
+    font-weight: 750;
+}
+
+.bv-overview-info p {
+    margin: 0;
+    color: #bfdbfe;
+    font-size: 12px;
+}
+
+.bv-account-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.bv-status-dot {
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+}
+
+/* Messages */
+
+.bv-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.bv-error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.bv-success {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+/* Section heading */
+
+.bv-section-heading h2 {
+    margin: 0 0 6px;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+/* Action cards */
+
+.bv-action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.bv-action-card {
+    background: #ffffff;
+    border: 1px solid #e8edf3;
+    border-radius: 13px;
+    padding: 23px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+}
+
+.bv-action-top {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 24px;
+}
+
+.bv-action-icon {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 11px;
+}
+
+.bv-deposit-icon {
+    color: #15803d;
+    background: #dcfce7;
+}
+
+.bv-withdraw-icon {
+    color: #c2410c;
+    background: #ffedd5;
+}
+
+.bv-action-top h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.bv-action-top p {
+    margin: 0;
+    color: #8792a2;
+    font-size: 12px;
+}
+
+/* Form */
+
+.bv-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 17px;
+}
+
+.bv-form-group label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.bv-form-group input,
+.bv-form-group select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #dce3ec;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: 0.2s;
+}
+
+.bv-form-group input:focus,
+.bv-form-group select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.bv-form-group input::placeholder {
+    color: #a0a9b7;
+}
+
+.bv-form-group input:disabled,
+.bv-form-group select:disabled {
+    background: #f1f5f9;
+    cursor: not-allowed;
+}
+
+/* Action buttons */
+
+.bv-action-btn {
+    width: 100%;
+    min-height: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 9px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 13px;
+    font-weight: 650;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.bv-deposit-btn {
+    background: #15803d;
+}
+
+.bv-deposit-btn:hover {
+    background: #166534;
+}
+
+.bv-withdraw-btn {
+    background: #334155;
+}
+
+.bv-withdraw-btn:hover {
+    background: #1e293b;
+}
+
+.bv-action-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* History card */
+
+.bv-history-card {
+    background: #ffffff;
+    border: 1px solid #e8edf3;
+    border-radius: 13px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+}
+
+.bv-history-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 21px 23px;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.bv-history-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.bv-history-icon {
+    width: 41px;
+    height: 41px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 10px;
+}
+
+.bv-history-title h2 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.bv-history-title p {
+    margin: 0;
+    color: #8792a2;
+    font-size: 12px;
+}
+
+.bv-count {
+    padding: 7px 11px;
+    border-radius: 20px;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+/* Table */
+
+.bv-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.bv-table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: nowrap;
+}
+
+.bv-table th {
+    padding: 14px 17px;
+    background: #f8fafc;
+    color: #64748b;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.bv-table td {
+    padding: 16px 17px;
+    border-bottom: 1px solid #f0f2f5;
+    color: #475569;
+    font-size: 12px;
+}
+
+.bv-table tbody tr:hover {
+    background: #fafcff;
+}
+
+.bv-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.bv-amount-heading {
+    text-align: right !important;
+}
+
+.bv-type-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.bv-credit {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.bv-debit {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.bv-credit-amount {
+    color: #15803d !important;
+    text-align: right;
+    font-weight: 700;
+}
+
+.bv-debit-amount {
+    color: #dc2626 !important;
+    text-align: right;
+    font-weight: 700;
+}
+
+/* Empty state */
+
+.bv-empty-state {
+    padding: 55px 20px;
+    text-align: center;
+}
+
+.bv-empty-icon {
+    width: 62px;
+    height: 62px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    background: #f1f5f9;
+    color: #64748b;
+    border-radius: 50%;
+}
+
+.bv-empty-state h3 {
+    margin: 0 0 8px;
+    color: #334155;
+    font-size: 16px;
+}
+
+.bv-empty-state p {
+    max-width: 380px;
+    margin: auto;
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Loading */
+
+.bv-loading {
+    padding: 50px;
+    text-align: center;
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* Responsive design */
+
+@media (max-width: 850px) {
+    .bv-action-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .bv-page-heading {
+        align-items: flex-start;
+    }
+
+    .bv-page-heading h1 {
+        font-size: 23px;
+    }
+
+    .bv-overview-card {
+        flex-wrap: wrap;
+        padding: 18px;
+    }
+
+    .bv-overview-info h2 {
+        font-size: 23px;
+    }
+
+    .bv-account-status {
+        margin-left: 0;
+    }
+
+    .bv-action-card {
+        padding: 17px;
+    }
+
+    .bv-history-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 17px;
+    }
+
+    .bv-refresh-btn {
+        padding: 9px 11px;
+        font-size: 12px;
+    }
+}

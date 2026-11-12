@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum OnboardingStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LedgerEntryType {
+  CREDIT
+  DEBIT
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(USER)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  accounts            Account[]
+  onboarding          Onboarding?
+  auditLogs           AuditLog[]
+  reviews             Onboarding[]         @relation("ReviewedBy")
+  passwordResetTokens PasswordResetToken[]
+}
+
+model Account {
+  id            String        @id @default(uuid())
+  accountNumber String        @unique
+  accountType   String        @default("SAVINGS")
+  balance       BigInt        @default(0)
+  currency      String        @default("INR")
+  status        AccountStatus @default(PENDING)
+  ownerId       String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  owner         User          @relation(fields: [ownerId], references: [id])
+  ledgerEntries LedgerEntry[]
+}
+
+model Onboarding {
+  id              String           @id @default(uuid())
+  userId          String           @unique
+  accountType     String           @default("SAVINGS")
+  applicationNote String?
+  status          OnboardingStatus @default(PENDING)
+  reviewedById    String?
+  remarks         String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  user     User  @relation(fields: [userId], references: [id])
+  reviewer User? @relation("ReviewedBy", fields: [reviewedById], references: [id])
+}
+
+model LedgerEntry {
+  id          String          @id @default(uuid())
+  accountId   String
+  type        LedgerEntryType
+  amount      BigInt
+  referenceId String
+  description String
+  createdAt   DateTime        @default(now())
+
+  account Account @relation(fields: [accountId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  actor User? @relation(fields: [actorId], references: [id])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
