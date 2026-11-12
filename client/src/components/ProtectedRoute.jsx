@@ -6,10 +6,17 @@ const ProtectedRoute = () => {
     const { user, loading } = useAuth();
 
     if (loading) {
-        return <div className="loading-screen">Loading BalanceVault...</div>;
+        return (
+            <div className="loading-screen">
+                Loading BalanceVault...
+            </div>
+        );
     }
 
-    return user ? <Outlet /> : <Navigate to="/login" replace />;
+    return user
+        ? <Outlet />
+        : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
+
